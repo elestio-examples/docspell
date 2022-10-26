@@ -20,7 +20,7 @@ services:
   # secret.
   restserver:
     image: docspell/restserver:latest
-    container_name: docspell-restserver2
+    container_name: docspell-restserver
     restart: always
     ports:
       - "172.17.0.1:9880:7880"
@@ -47,7 +47,7 @@ services:
 
   joex:
     image: docspell/joex:latest
-    container_name: docspell-joex2
+    container_name: docspell-joex
     ## For more memory add corresponding arguments, like below. Also see
     ## https://docspell.org/docs/configure/#jvm-options
     # command:
@@ -88,7 +88,7 @@ services:
   # The --not-matches "**/.*" option is to exclude hidden files.
   consumedir:
     image: docspell/dsc:latest
-    container_name: docspell-consumedir2
+    container_name: docspell-consumedir
     command:
       - dsc
       - "-d"
@@ -109,7 +109,7 @@ services:
 
   db:
     image: postgres:15.0
-    container_name: postgres_db2
+    container_name: postgres_db
     restart: always
     volumes:
       - ./docspell-postgres_data:/var/lib/postgresql/data/
@@ -120,7 +120,7 @@ services:
 
   solr:
     image: solr:9
-    container_name: docspell-solr2
+    container_name: docspell-solr
     restart: always
     volumes:
       - ./docspell-solr_data:/var/solr
