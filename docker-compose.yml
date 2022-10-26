@@ -20,8 +20,8 @@ services:
   # secret.
   restserver:
     image: docspell/restserver:latest
-    container_name: docspell-restserver
-    restart: unless-stopped
+    container_name: docspell-restserver2
+    restart: always
     ports:
       - "172.17.0.1:9880:7880"
     environment:
@@ -47,12 +47,12 @@ services:
 
   joex:
     image: docspell/joex:latest
-    container_name: docspell-joex
+    container_name: docspell-joex2
     ## For more memory add corresponding arguments, like below. Also see
     ## https://docspell.org/docs/configure/#jvm-options
     # command:
     #   - -J-Xmx3G
-    restart: unless-stopped
+    restart: always
     environment:
       - TZ=Europe/Berlin
       - DOCSPELL_JOEX_APP__ID=joex1
@@ -88,7 +88,7 @@ services:
   # The --not-matches "**/.*" option is to exclude hidden files.
   consumedir:
     image: docspell/dsc:latest
-    container_name: docspell-consumedir
+    container_name: docspell-consumedir2
     command:
       - dsc
       - "-d"
@@ -101,7 +101,7 @@ services:
       - "--header"
       - "Docspell-Integration:integration-password123"
       - "/opt/docs"
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./docs:/opt/docs
     depends_on:
@@ -109,8 +109,8 @@ services:
 
   db:
     image: postgres:15.0
-    container_name: postgres_db
-    restart: unless-stopped
+    container_name: postgres_db2
+    restart: always
     volumes:
       - ./docspell-postgres_data:/var/lib/postgresql/data/
     environment:
@@ -120,8 +120,8 @@ services:
 
   solr:
     image: solr:9
-    container_name: docspell-solr
-    restart: unless-stopped
+    container_name: docspell-solr2
+    restart: always
     volumes:
       - ./docspell-solr_data:/var/solr
     command:
