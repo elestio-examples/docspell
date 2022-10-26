@@ -33,5 +33,5 @@ curl http://$target/api/v1/open/signup/register \
   -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36' \
   -H 'X-Docspell-Auth: '"${token}"'' \
   -H 'sec-ch-ua-platform: "macOS"' \
-  --data-raw '{"name":"rootmail","smtpHost":'"${EMAIL_HOST}"',"smtpPort":'"${EMAIL_PORT}"',"smtpUser":'"${EMAIL_HOST_USER}"',"smtpPassword":'"${EMAIL_HOST_PASSWORD}"',"from":'"${DEFAULT_FROM_EMAIL}"',"replyTo":null,"sslType":"none","ignoreCertificates":true}' \
+  --data-raw '{"name":"rootmail","smtpHost":"'"${EMAIL_HOST}"'","smtpPort":"'"${EMAIL_PORT}"'","smtpUser":"'"${EMAIL_HOST_USER}"'","smtpPassword":"'"${EMAIL_HOST_PASSWORD}"'","from":"'"${DEFAULT_FROM_EMAIL}"'","replyTo":"","sslType":"none","ignoreCertificates":true}' \
   --compressed
