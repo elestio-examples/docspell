@@ -36,6 +36,10 @@ environments:
     value: "False"
   - key: "EMAIL_USE_SSL"
     value: "False"
+  - key: "ADMIN__ENDPOINT_SECRET"
+    value: "random_password"
+  - key: "DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER"
+    value: "random_password"
 
 config:
   runTime: "dockerCompose"
