@@ -10,7 +10,7 @@ Deploy Docspell with CI/CD on Elestio
 
 # Once deployed ...
 
-You can can open Docspell UI here:
+You can open Docspell UI here:
 
     URL: https://[CI_CD_DOMAIN]
     login: root
