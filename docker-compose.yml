@@ -19,7 +19,7 @@ services:
   # DOCSPELL_SERVER_BACKEND_SIGNUP_NEW__INVITE__PASSWORD to some
   # secret.
   restserver:
-    image: docspell/restserver:latest
+    image: docspell/restserver:${SOFTWARE_VERSION_TAG}
     restart: always
     ports:
       - "172.17.0.1:9880:7880"
@@ -45,7 +45,7 @@ services:
       - db
 
   joex:
-    image: docspell/joex:latest
+    image: docspell/joex:${SOFTWARE_VERSION_TAG}
     ## For more memory add corresponding arguments, like below. Also see
     ## https://docspell.org/docs/configure/#jvm-options
     # command:
@@ -85,7 +85,7 @@ services:
   #
   # The --not-matches "**/.*" option is to exclude hidden files.
   consumedir:
-    image: docspell/dsc:latest
+    image: docspell/dsc:${SOFTWARE_VERSION_TAG}
     command:
       - dsc
       - "-d"
