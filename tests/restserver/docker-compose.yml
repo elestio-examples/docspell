@@ -1,0 +1,95 @@
+version: '3.8'
+services:
+
+  restserver:
+    image: docspell/restserver:${SOFTWARE_VERSION_TAG}
+    restart: always
+    ports:
+      - "172.17.0.1:9880:7880"
+    environment:
+      - TZ=Europe/Berlin
+      - DOCSPELL_SERVER_INTERNAL__URL=http://restserver:7880
+      - DOCSPELL_SERVER_ADMIN__ENDPOINT_SECRET=${ADMIN__ENDPOINT_SECRET}
+      - DOCSPELL_SERVER_AUTH_SERVER__SECRET=
+      - DOCSPELL_SERVER_BACKEND_JDBC_PASSWORD=dbpass
+      - DOCSPELL_SERVER_BACKEND_JDBC_URL=jdbc:postgresql://db:5432/dbname
+      - DOCSPELL_SERVER_BACKEND_JDBC_USER=dbuser
+      - DOCSPELL_SERVER_BIND_ADDRESS=0.0.0.0
+      - DOCSPELL_SERVER_FULL__TEXT__SEARCH_ENABLED=true
+      - DOCSPELL_SERVER_FULL__TEXT__SEARCH_SOLR_URL=http://solr:8983/solr/docspell
+      - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_ENABLED=true
+      - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_ENABLED=true
+      - DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER__VALUE=${DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER}
+      - DOCSPELL_SERVER_BACKEND_SIGNUP_MODE=open
+      - DOCSPELL_SERVER_BACKEND_SIGNUP_NEW__INVITE__PASSWORD=
+      - DOCSPELL_SERVER_BACKEND_ADDONS_ENABLED=false
+    depends_on:
+      - solr
+      - db
+
+  joex:
+    image: docspell/joex:${SOFTWARE_VERSION_TAG}
+    restart: always
+    environment:
+      - TZ=Europe/Berlin
+      - DOCSPELL_JOEX_APP__ID=joex1
+      - DOCSPELL_JOEX_PERIODIC__SCHEDULER_NAME=joex1
+      - DOCSPELL_JOEX_SCHEDULER_NAME=joex1
+      - DOCSPELL_JOEX_BASE__URL=http://joex:7878
+      - DOCSPELL_JOEX_BIND_ADDRESS=0.0.0.0
+      - DOCSPELL_JOEX_FULL__TEXT__SEARCH_ENABLED=true
+      - DOCSPELL_JOEX_FULL__TEXT__SEARCH_SOLR_URL=http://solr:8983/solr/docspell
+      - DOCSPELL_JOEX_JDBC_PASSWORD=dbpass
+      - DOCSPELL_JOEX_JDBC_URL=jdbc:postgresql://db:5432/dbname
+      - DOCSPELL_JOEX_JDBC_USER=dbuser
+      - DOCSPELL_JOEX_ADDONS_EXECUTOR__CONFIG_RUNNER=docker,trivial
+    ports:
+      - "172.17.0.1:9878:7878"
+    depends_on:
+      - solr
+      - db
+   
+  consumedir:
+    image: docspell/dsc:${SOFTWARE_VERSION_TAG}
+    command:
+      - dsc
+      - "-d"
+      - "http://docspell-restserver:7880"
+      - "watch"
+      - "--delete"
+      - "-ir"
+      - "--not-matches"
+      - "**/.*"
+      - "--header"
+      - "Docspell-Integration:${DOCSPELL_SERVER_INTEGRATION__ENDPOINT_HTTP__HEADER_HEADER}"
+      - "/opt/docs"
+    restart: always
+    volumes:
+      - ./docs:/opt/docs
+    depends_on:
+      - restserver
+
+  db:
+    image: postgres:14
+    restart: always
+    volumes:
+      - ./docspell-postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=dbpass
+      - POSTGRES_DB=dbname
+
+  solr:
+    image: solr:9
+    restart: always
+    volumes:
+      - ./docspell-solr_data:/var/solr
+    command:
+      - solr-precreate
+      - docspell
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8983/solr/docspell/admin/ping"]
+      interval: 1m
+      timeout: 10s
+      retries: 2
+      start_period: 30s
